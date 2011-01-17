@@ -25,12 +25,12 @@ def __read_cmd_args():
     Set up the Option Parser to get the ods filename and output
     filename from the command line parameters.
     """
-    usage = "usage: ./word_weight.py -f ODS_FILE [-o OUTPUT_FILE]\n\nTo run supply the ods file with the data and an optional output filename."
+    usage = "usage: ./word_weight.py -f ODS_FILE [-o OUTPUT_FILE] -w\n\nTo run, supply the ods file with the data and an optional output filename."
     parser = OptionParser(usage=usage)
     parser.set_defaults(output_filename="./output")
     parser.add_option("-f", "--filename", metavar="ODS_FILE", action="store", type="string", dest="ods_filename", help="Specify an .ODS_FILE to get data from.")
     parser.add_option("-o", "--output-file", metavar="OUTPUT_FILE", action="store", type="string", dest="output_filename", help="Specify an OUTPUT_FILE.")
-    parser.add_option("-w", "--wordle", action="store_true", dest="wordle", default=False)
+    parser.add_option("-w", "--wordle", action="store_true", dest="wordle", default=False, help="Runs in Wordle mode.")
     return parser.parse_args()
 
     
