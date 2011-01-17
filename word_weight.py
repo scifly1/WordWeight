@@ -16,10 +16,8 @@
 # along with word_weight.  If not, see <http://www.gnu.org/licenses/>.
 
 from optparse import OptionParser
-from xml.dom import minidom
+import ODS
 import ODT
-import tempfile
-import zipfile
 
 
 def __read_cmd_args():
@@ -33,42 +31,14 @@ def __read_cmd_args():
     parser.add_option("-o", "--output-file", metavar="OUTPUT_FILE", action="store", type="string", dest="output_filename", help="Specify an OUTPUT_FILE.")
     return parser.parse_args()
 
-
-def __get_rows(filename):
-    """
-    Open the ods spreadsheet and get each row in to a list to return.
-    """
-    ods_file = filename
-    ods = zipfile.ZipFile(ods_file,'r')
-    tmp_ods_dir = tempfile.mkdtemp()
-    ods.extract('content.xml',tmp_ods_dir)
-    ods.close()
-
-    ods_xml = minidom.parse(tmp_ods_dir + '/content.xml')
-    rows = ods_xml.getElementsByTagName('table:table-row')
-
-    return rows
-
-def __parse_rows(rows):
-    """
-    Parse rows from the ods file and return a list of tuples of each word and
-    its associated weighting.
-    """
-    word_list = []
-    for row in rows:
-        if row.childNodes.length > 1:
-            if row.childNodes[1].getAttribute('office:value-type') == 'float':
-                text = row.childNodes[0].childNodes[0].childNodes[0].nodeValue
-                size = row.childNodes[1].childNodes[0].childNodes[0].nodeValue
-    
-                word_list.append((text, size))
-    return word_list
-                
     
 #Program starts here..
 options, args = __read_cmd_args()
-rows = __get_rows(options.ods_filename)
-word_list = __parse_rows(rows)
+if options.output_filename is None:
+    options.output_filename = "./output"
+    
+ods = ODS.ODS(options.ods_filename)
+word_list = ods.parse_data()
 
 new_odt = ODT.ODT()
 new_odt.parse_word_list(word_list)
@@ -76,50 +46,5 @@ new_odt.save(options.output_filename)
 new_odt.finish()
 
 
-"""
-
-#Run through list of font sizes to find all unique sizes and add them to the odt template
-
-for word in word_list:
-    size = word[1]
-    if size not in size_list:
-        size_list.append(size)
-        #create new style node and text-properties node and append them to the document
-        elem = odt_xml.createElement('style:style')
-        elem.setAttribute('style:name', str.format('T{0}', size))
-        elem.setAttribute('style:family','text')
-        styles[0].appendChild(elem)
-
-        elem = odt_xml.createElement('style:text-properties')
-        pt_size = str.format('{0}pt', size)
-        elem.setAttribute('fo:font-size', pt_size)
-        elem.setAttribute('style:font-size-asian', pt_size)
-        elem.setAttribute('style:font-size-complex', pt_size)
-        styles[0].lastChild.appendChild(elem)        
-    #Make sure each word has a space after it.
-    text = word[0]
-    if text[-1:] != ' ':
-        text = word[0] + " "
-        
-        
-    #Create the text:span node from each piece of text and its associated style
-    elem = odt_xml.createElement('text:span')
-    elem.setAttribute('text:style-name',str.format('T{0}', size))
-    text_elem = odt_xml.createTextNode(text)
-    elem.appendChild(text_elem)
-    paragraph[0].appendChild(elem)
-
-#Save modifyed content.xml in a new odt file
-f = open(odt_path,'w')
-odt_xml.writexml(f, encoding='utf-8')
-f.close()
-new_odt = zipfile.ZipFile(options.output_filename, 'w')
-for name in odt_ls:
-    new_odt.write(tmp_odt_dir + '/' + name, name)
-
-new_odt.close()
-
-shutil.rmtree(tmp_odt_dir)
-"""
 
 
