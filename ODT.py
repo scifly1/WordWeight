@@ -57,9 +57,9 @@ class ODT(object):
         """
         Takes a list of words and the weighting to be applied to each one
         as a list of tuples.
-        Parses the each word and weighting and then adds each them to the
+        Parses each word and weighting and then adds each them to the
         content.xml file of the odt archive.  It creates the correct style 
-        elements for each weighting/font size.
+        elements for each weighting/font size. 
         """
         self.__setup_styles_and_para_elements()
         self.size_list = []
@@ -75,7 +75,24 @@ class ODT(object):
             #and its associated style
             self.__create_text_nodes(text, size)
             
+    def parse_words_for_wordle(self,word_list):
+        """
+        Takes a list of words and the weighting to be applied to each one
+        as a list of tuples.
+        Parses each word and weighting and then concatenates weighting number
+        of each word together.
+        """
+        self.text = self.content_xml.getElementsByTagName('office:text')
+        self.size_list = []
         
+        for word in word_list:
+            size = word[1]
+            #Check each word has a trailing space
+            text = self.__check_spaces(word[0])
+            #Concatenate 
+            text = text + ':' + size
+            self.__create_wordle_text_nodes(text, size)
+             
         
     def __setup_styles_and_para_elements(self):
         """
@@ -122,6 +139,16 @@ class ODT(object):
         text_elem = self.content_xml.createTextNode(text)
         elem.appendChild(text_elem)
         self.paragraph[0].appendChild(elem)
+        
+    def __create_wordle_text_nodes(self, text,size):
+        """
+        Each text:p node contains the text and its 
+        weighting.
+        """ 
+        elem = self.content_xml.createElement('text:p')
+        text_elem = self.content_xml.createTextNode(text)
+        elem.appendChild(text_elem)
+        self.text[-1].appendChild(elem)
         
     def save(self,filename):
         """

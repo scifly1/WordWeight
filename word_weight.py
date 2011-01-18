@@ -39,12 +39,14 @@ options, args = __read_cmd_args()
 
 ods = ODS.ODS(options.ods_filename)
 word_list = ods.parse_data()
-
-if options.wordle:
-    print "Wordle mode selected"
     
 new_odt = ODT.ODT()
-new_odt.parse_word_list(word_list)
+if options.wordle:
+    print "Wordle mode selected"
+    new_odt.parse_words_for_wordle(word_list)
+else:
+    new_odt.parse_word_list(word_list)
+    
 new_odt.save(options.output_filename)
 new_odt.finish()
 
