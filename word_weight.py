@@ -31,6 +31,7 @@ def __read_cmd_args():
     parser.add_option("-f", "--filename", metavar="ODS_FILE", action="store", type="string", dest="ods_filename", help="Specify an .ODS_FILE to get data from.")
     parser.add_option("-o", "--output-file", metavar="OUTPUT_FILE", action="store", type="string", dest="output_filename", help="Specify an OUTPUT_FILE.")
     parser.add_option("-w", "--wordle", action="store_true", dest="wordle", default=False, help="Runs in Wordle mode.")
+    parser.add_option("-a", "--wordle-advanced", action="store_true", dest="wordle_adv", default=False, help="Runs in Wordle advanced mode.")
     return parser.parse_args()
 
     
@@ -44,6 +45,9 @@ new_odt = ODT.ODT()
 if options.wordle:
     print "Wordle mode selected"
     new_odt.parse_words_for_wordle(word_list)
+elif options.wordle_adv:
+    print "Wordle advanced mode selected"
+    new_odt.parse_words_for_wordle(word_list, True)
 else:
     new_odt.parse_word_list(word_list)
     

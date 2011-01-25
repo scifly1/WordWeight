@@ -75,7 +75,7 @@ class ODT(object):
             #and its associated style
             self.__create_text_nodes(text, size)
             
-    def parse_words_for_wordle(self,word_list):
+    def parse_words_for_wordle(self,word_list, advanced=False):
         """
         Takes a list of words and the weighting to be applied to each one
         as a list of tuples.
@@ -89,8 +89,12 @@ class ODT(object):
             size = word[1]
             #Check each word has a trailing space
             text = self.__check_spaces(word[0])
-            #Concatenate 
-            text = text + ':' + size
+            #Concatenate
+            if advanced is True: 
+                text = text + ':' + size
+            else:
+                text = text * int(size)
+                
             self.__create_wordle_text_nodes(text, size)
              
         
