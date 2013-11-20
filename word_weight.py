@@ -28,7 +28,7 @@ def __get_parser():
     """
     usage = "usage: ./word_weight.py [-w:-a] [-o OUTPUT_FILE] ODS_FILE\n\nTo run, supply the ods file with the data and an optional output filename."
     parser = OptionParser(usage=usage)
-    parser.set_defaults(output_filename="./output")
+    parser.set_defaults(output_filename="./output.odt")
     parser.add_option("-o", "--output-file", metavar="OUTPUT_FILE", action="store", type="string", dest="output_filename", help="Specify an OUTPUT_FILE.")
     parser.add_option("-w", "--wordle", action="store_true", dest="wordle", default=False, help="Runs in Wordle mode.")
     parser.add_option("-a", "--wordle-advanced", action="store_true", dest="wordle_adv", default=False, help="Runs in Wordle advanced mode.")
@@ -56,8 +56,11 @@ elif options.wordle_adv:
     new_odt.parse_words_for_wordle(word_list, True)
 else:
     new_odt.parse_word_list(word_list)
-    
-new_odt.save(options.output_filename)
+
+if options.output_filename.endswith(".odt"):    
+    new_odt.save(options.output_filename)
+else:
+    new_odt.save(options.output_filename + ".odt")
 new_odt.finish()
 
 
