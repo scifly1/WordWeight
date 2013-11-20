@@ -16,29 +16,35 @@
 # along with word_weight.  If not, see <http://www.gnu.org/licenses/>.
 
 from optparse import OptionParser
+import sys
 import ODS
 import ODT
 
 
-def __read_cmd_args():
+def __get_parser():
     """
     Set up the Option Parser to get the ods filename and output
     filename from the command line parameters.
     """
-    usage = "usage: ./word_weight.py -f ODS_FILE [-o OUTPUT_FILE] -w\n\nTo run, supply the ods file with the data and an optional output filename."
+    usage = "usage: ./word_weight.py [-w:-a] [-o OUTPUT_FILE] ODS_FILE\n\nTo run, supply the ods file with the data and an optional output filename."
     parser = OptionParser(usage=usage)
     parser.set_defaults(output_filename="./output")
-    parser.add_option("-f", "--filename", metavar="ODS_FILE", action="store", type="string", dest="ods_filename", help="Specify an .ODS_FILE to get data from.")
     parser.add_option("-o", "--output-file", metavar="OUTPUT_FILE", action="store", type="string", dest="output_filename", help="Specify an OUTPUT_FILE.")
     parser.add_option("-w", "--wordle", action="store_true", dest="wordle", default=False, help="Runs in Wordle mode.")
     parser.add_option("-a", "--wordle-advanced", action="store_true", dest="wordle_adv", default=False, help="Runs in Wordle advanced mode.")
-    return parser.parse_args()
+    return parser
 
     
 #Program starts here..
-options, args = __read_cmd_args()
+parser = __get_parser()
+options, args = parser.parse_args()
 
-ods = ODS.ODS(options.ods_filename)
+if len(args) != 1 or args[0] == None:
+    print("\nYou must supply a source ODS_FILE filename\n")
+    parser.print_help()
+    sys.exit(0)
+ 
+ods = ODS.ODS(args[0])
 word_list = ods.parse_data()
     
 new_odt = ODT.ODT()
