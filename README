@@ -1,0 +1,7 @@
+The .ods file with the weighted word data needs to be in the format:
+Row A	Row B
+Word	Freqency
+
+see the file example.ods
+
+
