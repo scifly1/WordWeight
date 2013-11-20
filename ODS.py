@@ -50,7 +50,12 @@ class ODS(object):
         for row in rows:
             if row.childNodes.length > 1:
                 if row.childNodes[1].getAttribute('office:value-type') == 'float':
-                    text = row.childNodes[0].childNodes[0].childNodes[0].nodeValue
+                    #check for leading spaces
+                    if row.childNodes[0].childNodes[0].childNodes[0].nodeName == 'text:s':
+                        text = row.childNodes[0].childNodes[0].childNodes[1].nodeValue
+                    else:
+                        text = row.childNodes[0].childNodes[0].childNodes[0].nodeValue
+
                     size = row.childNodes[1].childNodes[0].childNodes[0].nodeValue
     
                     word_list.append((text, size))
